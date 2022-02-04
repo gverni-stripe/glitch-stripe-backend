@@ -41,9 +41,15 @@ app.get('/config', (req, res) => {
   });
 });
 
-app.post('/create-payment-intent', async (req, res) => {
+
+// The route create_payment_intent is used by android SDK Example: https://github.com/stripe/stripe-android
+// The route create-payment-intent is used by the `accept-a-payment example`
+
+app.post(['/create-payment-intent','/create_payment_intent'], async (req, res) => {
   const {paymentMethodType, currency} = req.body;
 
+
+  
   // Each payment method type has support for different currencies. In order to
   // support many payment method types and several currencies, this server
   // endpoint accepts both the payment method type and the currency as
@@ -53,7 +59,7 @@ app.post('/create-payment-intent', async (req, res) => {
   const params = {
     payment_method_types: [paymentMethodType],
     amount: 1999,
-    currency: currency,
+    currency: currency || 'gbp',   // The Android SDK example does not send any currency
   }
 
   // If this is for an ACSS payment, we add payment_method_options to create
