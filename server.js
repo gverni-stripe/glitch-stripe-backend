@@ -51,6 +51,23 @@ const countryCurrency = {
   in: "inr",
 };
 
+const paymentMethodForCountry = {
+  us: ["card"],
+  mx: ["card", "oxxo"],
+  my: ["card", "fpx", "grabpay"],
+  nl: ["card", "ideal", "sepa_debit", "sofort"],
+  au: ["card", "au_becs_debit"],
+  gb: ["card", "paypal", "bacs_debit"],
+  es: ["card", "paypal", "sofort"],
+  it: ["card", "paypal", "sofort"],
+  pl: ["card", "paypal", "p24"],
+  be: ["card", "paypal", "sofort", "bancontact"],
+  de: ["card", "paypal", "sofort", "giropay"],
+  at: ["card", "paypal", "sofort", "eps"],
+  sg: ["card", "alipay", "grabpay"],
+  in: ["card", "upi", "netbanking"],
+};
+
 app.use(express.static(process.env.STATIC_DIR));
 app.use(
   express.json({
@@ -118,9 +135,19 @@ app.post("/confirm_payment_intent", async (req, res) => {
       amount,
       currency: countryCurrency(req.body.country) || "usd",
       customer: req.body["customer_id"], //TODO: see https://github.com/stripe/example-mobile-backend/blob/9a3a4705109b2c979cb0ea19effbcec34f3deaad/web.rb#L187
-      useStripeSdk: req.body["payment_method"] ? true : false, 
-      paymentMethodTypes: paymentMethodForCountry(req.body.country)
-      
+      source: req.body.source,
+      paymentMethod: paymentMethodId,
+      paymentMethodTypes: paymentMethodForCountry(req.body.country) || ["card"],
+      description: "Example Payment Intent from gverni-stripe-backend",
+      shipping: req.body.shipping,
+      returnUrl: req.body["return_url"],
+      confirm: true,
+      confirmationMethod: "manual",
+      useStripeSdk: true,
+      captureMethod: process.env["CAPTURE_METHOD"] || "automatic",
+      metadata: {
+        orderId: "5278735C-1F40-407D-933A-286E463E72D8",
+      },
     });
   }
 });
