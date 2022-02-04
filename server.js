@@ -122,6 +122,21 @@ function calculatePrice(products, shipping) {
   return amount;
 }
 
+function generatePaymentResponse(paymentIntent) {
+  let result
+  if (paymentIntent.status === 'requires_action') {
+    result = {
+      requires_action: true, 
+      secret: paymentIntent.clientSecret
+    }
+  } else if (paymentIntent.status === 'succeeded' || (paymentIntent.status === 'requires_capture' && process.env["CAPTURE_METHOD"] === 'manua')) {
+    result = {success: true}
+  } else {
+    result = "Invalid PaymentIntent status"
+  }
+  return result 
+}
+
 // Route used by android SDK
 app.post("/confirm_payment_intent", async (req, res) => {
   const paymentIntentId = req.body["payment_intent_id"];
@@ -150,7 +165,14 @@ app.post("/confirm_payment_intent", async (req, res) => {
       },
     });
   }
+  
+  let response = generatePaymentResponse(paymentIntent)
+  
+  res.status(typeof response === 'string' ? 500 : 200).send(response)
+
 });
+
+
 
 // The route create_payment_intent is used by android SDK Example: https://github.com/stripe/stripe-android
 // The route create-payment-intent is used by the `accept-a-payment example`
@@ -195,6 +217,9 @@ app.post(
       // Send publishable key and PaymentIntent details to client
       res.send({
         clientSecret: paymentIntent.client_secret,
+        secret: paymentIntent.client_secret,
+        id: paymentIntent.id,
+        status: paymentIntent.status
       });
     } catch (e) {
       return res.status(400).send({
