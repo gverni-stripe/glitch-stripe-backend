@@ -35,6 +35,22 @@ const emojiStore = {
   "👚": 2500,
 };
 
+const countryCurrency = {
+  us: "usd",
+  mx: "mxd",
+  my: "myr",
+  at: "eur",
+  be: "eur",
+  de: "eur",
+  es: "eur",
+  it: "eur",
+  nl: "eur",
+  pl: "eur",
+  au: "aud",
+  gb: "gbp",
+  in: "inr",
+};
+
 app.use(express.static(process.env.STATIC_DIR));
 app.use(
   express.json({
@@ -91,13 +107,21 @@ function calculatePrice(products, shipping) {
 
 // Route used by android SDK
 app.post("/confirm_payment_intent", async (req, res) => {
-  const paymentIntentId = req.body[payment_intent_id];
-  const paymentMethodId = req.body[payment_method_id];
+  const paymentIntentId = req.body["payment_intent_id"];
+  const paymentMethodId = req.body["payment_method_id"];
 
   if (paymentIntentId) {
     await stripe.paymentIntents.confirm(paymentIntentId);
   } else if (paymentMethodId) {
-    
+    let amount = calculatePrice(req.body.products, req.body.shipping);
+    let paymentIntent = await stripe.paymentIntent.create({
+      amount,
+      currency: countryCurrency(req.body.country) || "usd",
+      customer: req.body["customer_id"], //TODO: see https://github.com/stripe/example-mobile-backend/blob/9a3a4705109b2c979cb0ea19effbcec34f3deaad/web.rb#L187
+      useStripeSdk: req.body["payment_method"] ? true : false, 
+      paymentMethodTypes: paymentMethodForCountry(req.body.country)
+      
+    });
   }
 });
 
