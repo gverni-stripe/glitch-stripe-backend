@@ -41,10 +41,19 @@ app.get('/config', (req, res) => {
   });
 });
 
+// Route used by android SDK
+app.post('/confirm_payment_intent', async(req, res) => {
+  const {paymentIntendId} = req.body;
+  
+  if (paymentIntentId) {
+    await stripe.payment
+  }
+  
+})
+
 
 // The route create_payment_intent is used by android SDK Example: https://github.com/stripe/stripe-android
 // The route create-payment-intent is used by the `accept-a-payment example`
-
 app.post(['/create-payment-intent','/create_payment_intent'], async (req, res) => {
   const {paymentMethodType, currency} = req.body;
 
