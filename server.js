@@ -191,6 +191,7 @@ app.post(
       payment_method_types: [paymentMethodType],
       amount: 1999,
       currency: currency || "gbp", // The Android SDK example does not send any currency
+      description: "Example Payment Intent from gverni-stripe-backend",
     };
 
     // If this is for an ACSS payment, we add payment_method_options to create
