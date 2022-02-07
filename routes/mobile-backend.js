@@ -1,3 +1,5 @@
+// This is a porting of https://github.com/stripe/example-mobile-backend/blob/v19.0.0/web.rb
+
 const emojiStore = {
   "👕": 2000,
   "👖": 4000,
