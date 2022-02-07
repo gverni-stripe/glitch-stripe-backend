@@ -18,6 +18,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
     url: "https://github.com/stripe-samples",
   },
 });
+app.set("stripe", stripe);
 
 app.use(express.static(process.env.STATIC_DIR));
 app.use(
@@ -45,7 +46,7 @@ app.get("/config", (req, res) => {
 });
 
 app.post("/confirm-payment-intent", mobileBackend.confirmPaymentIntent);
-app.post("/create_payment_intent", mobileBackend.confirmPaymentIntent);
+app.post("/create_payment_intent", mobileBackend.createPaymentIntent);
 app.post("/create-payment-intent", acceptAPayment.createPaymentIntent);
 
 // Expose a endpoint as a webhook handler for asynchronous events.
