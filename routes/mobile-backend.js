@@ -135,7 +135,7 @@ async function confirmPaymentIntent(req, res) {
 }
 
 async function createPaymentIntent(req, res) {
-    const stripe = req.app.get('stripe')
+  const stripe = req.app.get('stripe')
   const { paymentMethodType, currency } = req.body;
   
 

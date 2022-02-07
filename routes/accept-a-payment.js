@@ -38,7 +38,6 @@ async function createPaymentIntent(req, res) {
     // Send publishable key and PaymentIntent details to client
     res.send({
       clientSecret: paymentIntent.client_secret,
-      secret: paymentIntent.client_secret,
       id: paymentIntent.id,
       status: paymentIntent.status,
     });
