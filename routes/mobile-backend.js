@@ -1,4 +1,4 @@
-// This is a porting of https://github.com/stripe/example-mobile-backend/blob/v19.0.0/web.rb
+// This is a porting of https://github.com/stripe/example-mobile-backend/blob/v19.0.0/web.rbgit s
 
 const emojiStore = {
   "👕": 2000,
@@ -101,12 +101,12 @@ function generatePaymentResponse(paymentIntent) {
 
 // Route used by android SDK
 async function confirmPaymentIntent(req, res) {
-    const stripe = req.app.get('stripe')
+  const stripe = req.app.get("stripe");
 
   const paymentIntentId = req.body["payment_intent_id"];
   const paymentMethodId = req.body["payment_method_id"];
-  let paymentIntent 
-  
+  let paymentIntent;
+
   if (paymentIntentId) {
     paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId);
   } else if (paymentMethodId) {
@@ -130,16 +130,15 @@ async function confirmPaymentIntent(req, res) {
       },
     });
   }
-  
+
   let response = generatePaymentResponse(paymentIntent);
 
   res.status(typeof response === "string" ? 500 : 200).send(response);
 }
 
 async function createPaymentIntent(req, res) {
-  const stripe = req.app.get('stripe')
+  const stripe = req.app.get("stripe");
   const { paymentMethodType, currency } = req.body;
-  
 
   // Each payment method type has support for different currencies. In order to
   // support many payment method types and several currencies, this server
